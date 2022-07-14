@@ -21,8 +21,6 @@ UGrabber::UGrabber()
 void UGrabber::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	
 
 	// ...
 	
@@ -35,7 +33,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	// ...
 
-	
+	// Update location of the grabbed component (if it is grabbed).
 	if(auto* handle = GetPhysicsHandle()){
 		if(auto* grabbedComp = handle->GetGrabbedComponent()){
 			FVector targetLoc = GetComponentLocation() + GetForwardVector() * HoldDistance;
@@ -51,15 +49,15 @@ void UGrabber::Release(){
 	
 
 	if(auto* handle = GetPhysicsHandle()){
+		// Release component if it is grabbed
 		if(auto* grabbedComp = handle->GetGrabbedComponent()){
 			grabbedComp->WakeAllRigidBodies();
 			handle->ReleaseComponent();
-
+			// Delete a tag upon releasing.
 			auto& tags = grabbedComp->GetOwner()->Tags;
 			if(tags.Contains("Grabbed")){
 				tags.Remove("Grabbed");
 			}
-
 		}
 	}
 }
@@ -72,9 +70,10 @@ void UGrabber::Grab(){
 	
 	GetGrabbableInReach(hasHit, hitResult);
 
+	// If approapriate object was grabbed, process logic.
 	if(hasHit){
 
-
+		// Make hitcomponent component interactable.
 		UPrimitiveComponent* hitComponent = hitResult.GetComponent();
 		hitComponent->SetSimulatePhysics(true);
 		hitComponent->WakeAllRigidBodies();
@@ -83,20 +82,22 @@ void UGrabber::Grab(){
 		auto* hitActor = hitResult.GetActor();
 		auto& tags = hitActor->Tags;
 		
+		// Add Grabbed tag to the object.
 		if(!tags.Contains("Grabbed")){
 			tags.Add("Grabbed");
 		}
 
+		// Detach it from root scene component.
 		hitActor->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 
 
+		// Grab and drag component.
 		GetPhysicsHandle()->GrabComponentAtLocationWithRotation(
 			hitResult.GetComponent(),
 			NAME_None,
 			hitResult.ImpactPoint,
 			GetComponentRotation()
 		);
-		UE_LOG(LogTemp, Display, TEXT("Grabbed"));
 	}
 }
 
@@ -112,22 +113,23 @@ UPhysicsHandleComponent* UGrabber::GetPhysicsHandle() const
 void UGrabber::GetGrabbableInReach(bool& hasHit, FHitResult& hitResult) const
 {
 	
-
 	if(auto* handle = GetPhysicsHandle())
 	{
+		// Parameters required for sweep function.
+
 		FVector start = GetComponentLocation();
 
 		FVector end = start + (GetForwardVector() * MaxGrabDistance);
 
 		FCollisionShape sphere = FCollisionShape::MakeSphere(GrabRadius);
 
-		//FHitResult hitResult;
+		// Perform sweep.
 		hasHit = GetWorld()->SweepSingleByChannel(
 			hitResult,
 			start,
 			end,
-			FQuat::Identity,
-			ECC_GameTraceChannel2,
+			FQuat::Identity,				// No rotation.
+			ECC_GameTraceChannel2,			// Grabbed Trace Channel.
 			sphere
 		);
 	}

@@ -24,24 +24,31 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;	
 
+	// Whether component should activate moving state of the actor.
 	void SetShouldMove(bool shouldMove);
 
 private:
 
+	// Displacement vector. 
 	UPROPERTY(EditAnywhere)
 	FVector moveOffset;
 
+	// How long should it take for actor to reach offset endpoint.
 	UPROPERTY(EditAnywhere)
 	float moveTime = 4.0f;
 
+	// Flag.
 	bool shouldMove = false;
+
 
 	FVector initLoc;
 	FVector targetLoc;
 	FVector currLoc;
 
+	// Speed factor.
 	float speed;
 
+	// Moving function.
 	void move(FVector to, float DeltaTime);
 
 };

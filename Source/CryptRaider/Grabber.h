@@ -28,27 +28,33 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	// Do upon release.
 	UFUNCTION(BlueprintCallable)
 	void Release();
-
+	
+	// Perform while grabbed.
 	UFUNCTION(BlueprintCallable)
 	void Grab();
 
 		
 private:
-
+	// Denotes the distance maximum distance where object can be grabbed.
 	UPROPERTY(EditAnywhere)
 	float MaxGrabDistance;
 
+	// Denotes the radius of the collision shape.
 	UPROPERTY(EditAnywhere)
 	float GrabRadius;
 
+
+	// How far awway object can be from this component's origin.
 	UPROPERTY(EditAnywhere)
 	float HoldDistance;
 
+	// Return a pointer to physics components.
 	UPhysicsHandleComponent* GetPhysicsHandle() const;
 
+	// Output whether the object has been hit (bool) and hitResult.
 	void GetGrabbableInReach(bool& hasHit, FHitResult& hitResult) const;
 	
-	//bool grabbed;
 };

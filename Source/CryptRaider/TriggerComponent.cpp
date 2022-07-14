@@ -7,7 +7,6 @@
 UTriggerComponent::UTriggerComponent(){
 
 	PrimaryComponentTick.bCanEverTick = true;
-	//UE_LOG(LogTemp, Warning, TEXT("Begin!"));
 	this->unlockTag = "";
 
 }
@@ -16,7 +15,6 @@ UTriggerComponent::UTriggerComponent(){
 void UTriggerComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	//UE_LOG(LogTemp, Warning, TEXT("Begin!"));
 
 }
 
@@ -24,8 +22,10 @@ void UTriggerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	// if mover is set then do the logic.
 	if(mover){
 		AActor* unlockingActor = GetUnlockingActor();
+		// if appriate actor overlaps the component then attach actor's root component to this component and tell mover to move.
 		if(unlockingActor)
 		{
 			if(auto* component = Cast<UPrimitiveComponent>(unlockingActor->GetRootComponent()))
@@ -40,7 +40,6 @@ void UTriggerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 			mover->SetShouldMove(false);
 		}
 	}
-	// UE_LOG(LogTemp, Display, TEXT("I am %d"), actors.Num());
 
 
 }
@@ -49,11 +48,15 @@ AActor* UTriggerComponent::GetUnlockingActor() const
 {
 	TArray<AActor*> actors;
 	GetOverlappingActors(actors);
+	
+	// Find appropriate unlocking actor with an approriate tag and return it.
 	for(auto& actor : actors){
 		if(actor->ActorHasTag(this->unlockTag) && !actor->ActorHasTag("Grabbed")){
 			return actor;
 		}
 	}
+
+	// return nullptr otherwise.
 	return nullptr;
 
 }

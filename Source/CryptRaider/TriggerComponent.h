@@ -26,14 +26,18 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	// Blueprint callable function which sets the mover component.
 	UFUNCTION(BlueprintCallable)
 	void setMover(UMover* mover);
 	
 	
+	// Tag that actor must have to trigger mover.
 	UPROPERTY(EditAnywhere)
 	FName unlockTag;
 	
 private:
+	// Mover associated with a trigger (set up in blueprint).
 	UMover* mover;
+	// Returns a pointer to the unlocking actor.
 	AActor* GetUnlockingActor() const;
 };
