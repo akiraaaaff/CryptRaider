@@ -9,10 +9,10 @@ The game currently has only 1 level.
 
 
 ## Control
-WASD - Move.
-LMB (Hold) - Carry a prop.
-LMB (Release) - Drop a prop.
-Spacebar - Jump.
+### WASD - Move.
+### LMB (Hold) - Carry a prop.
+### LMB (Release) - Drop a prop.
+### Spacebar - Jump.
 
 
 ## Links
